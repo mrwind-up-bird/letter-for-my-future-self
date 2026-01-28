@@ -2,32 +2,14 @@
 
 > **"Don't let your agent die with amnesia."**
 
-This is a **Plugin for Claude Code** that solves the context window problem. It creates a "Last Will" protocol where the agent summarizes its state, solved problems, and active variables into a local `.memory/` folder before the session ends.
+**Letter to Myself** is a specialized Plugin for [Claude Code](https://docs.anthropic.com/en/docs/agents-and-tools/claude-code/overview). It solves the context window limit and session disconnection problem by implementing a **"Last Will" protocol**.
 
-## 🚀 Features
+Before a session ends, the agent summarizes its work, critical errors ("The Pain Log"), and active variables into a structured Markdown file within a local `.memory/` folder. When you return days later, the agent reads this file and resumes exactly where it left off.
 
-* **Persistence:** Writes structured markdown summaries to your local filesystem.
-* **The "Pain Log":** Specifically records failed attempts and errors to prevent future loops.
-* **Rolling Context:** Automatically reads the previous session's letter upon startup.
-* **Zero-Config Handover:** Resume work days later with zero context loss.
+## 📂 Repository Structure
 
----
-
-## 🛠️ Installation
-
-### 1. Generate the Plugin
-We provide a setup script to create the necessary directory structure and plugin files.
-
-1.  Download the `install_agent.sh` file from this repo.
-2.  Run it in your terminal:
-    ```bash
-    chmod +x install_agent.sh
-    ./install_agent.sh
-    ```
-
-### 2. Register with Claude
-Once the folder `letter-to-myself` is created, register it with Claude Code:
-
-```bash
-# Assuming you are in the same folder where you ran the script
-claude plugin add ./letter-to-myself
+```text
+.
+├── README.md           # This documentation
+├── install_agent.sh    # Setup script to build the plugin
+└── CLAUDE_TEMPLATE.md  # Configuration to drop into your projects
