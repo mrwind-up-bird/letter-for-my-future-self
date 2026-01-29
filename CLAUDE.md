@@ -10,9 +10,9 @@ This is a Claude Code plugin called "Letter to Myself" that implements context p
 
 ### Plugin Structure
 - `.claude-plugin/plugin.json` - Plugin manifest defining name, version, and component paths
-- `agents/letter-for-my-future-self.md` - Agent persona that handles checkpoint creation
-- `skills/save-checkpoint/skill.md` - Skill that writes memory checkpoints to disk
-- `skills/vibe-init/skill.md` - Skill that sets up the Vibe Coding CI/CD pipeline
+- `agents/letter-for-myself.md` - Agent persona that handles checkpoint creation
+- `skills/letter-checkpoint/skill.md` - Skill that writes memory checkpoints to disk
+- `skills/letter-init/skill.md` - Skill that sets up the Vibe Coding CI/CD pipeline
 - `CLAUDE_TEMPLATE.md` - Template users copy to their projects to enable the plugin
 - `install_agents.sh` - Installation script that sets up the plugin structure
 
@@ -53,7 +53,7 @@ The agent activates when users type:
 ### Setting Up Vibe Coding
 Initialize the blog generation pipeline by running:
 ```bash
-/vibe-init
+/letter-init
 ```
 
 This creates:
@@ -101,12 +101,12 @@ rg -n --hidden --glob ".memory/**" -e "AKIA[0-9A-Z]{16}" -e "BEGIN( RSA)? PRIVAT
 - **Pain Log emphasis**: Critical section for documenting failures and workarounds to prevent repeated mistakes
 
 ### Agent Behavior
-The `letter-for-my-future-self` agent operates in two modes:
+The `letter-for-myself` agent operates in two modes:
 1. **Normal mode**: Acts as a standard coding assistant
 2. **Checkpoint mode**: Triggered by exit signals, stops all work to review conversation history and generate a summary
 
 ### Skill Execution
-The `save-checkpoint` skill:
+The `letter-checkpoint` skill:
 1. Creates `.memory/` directory if needed
 2. Lists existing letter files to determine next sequential number
 3. Writes the generated letter using the Write tool
@@ -119,9 +119,9 @@ The `save-checkpoint` skill:
 ├── .claude-plugin/
 │   └── plugin.json           # Plugin manifest
 ├── agents/
-│   └── letter-for-my-future-self.md  # Agent persona definition
+│   └── letter-for-myself.md  # Agent persona definition
 ├── skills/
-│   └── save-checkpoint/
+│   └── letter-checkpoint/
 │       └── skill.md          # Checkpoint skill definition
 ├── CLAUDE_TEMPLATE.md        # Template for user projects
 ├── install_agents.sh         # Installation script

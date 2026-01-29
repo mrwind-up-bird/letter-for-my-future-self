@@ -1,16 +1,16 @@
 ---
-name: vibe-init
+name: letter-init
 description: Initialize the Vibe Coding pipeline to transform memory files into public-ready blog posts via CI/CD.
 ---
 
-# Vibe Init Skill
+# Letter Init Skill
 
 This skill sets up the complete "Vibe Coding" pipeline that automatically converts your `.memory/` session letters into polished blog posts using GitHub Actions and the Anthropic API.
 
 ## When to Use
 
 Invoke this skill when:
-- User types `/vibe-init`
+- User types `/letter-init`
 - User wants to set up blog post generation from memory files
 - User is setting up the repository for the first time
 

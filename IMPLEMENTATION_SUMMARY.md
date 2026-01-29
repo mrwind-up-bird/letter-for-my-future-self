@@ -2,7 +2,7 @@
 
 ## 🎯 Mission Complete
 
-I have successfully implemented the **Vibe Coding** plugin as an extension to the "letter-for-my-future-self" repository. The implementation transforms session memory files into public-ready blog posts via a CI/CD pipeline.
+I have successfully implemented the **Vibe Coding** plugin as an extension to the "letter-for-myself" repository. The implementation transforms session memory files into public-ready blog posts via a CI/CD pipeline.
 
 ---
 
@@ -25,7 +25,7 @@ I have successfully implemented the **Vibe Coding** plugin as an extension to th
 
 As Principal Software Architect, I adapted the plan to fit the **actual repository architecture** while achieving your goal:
 
-1. ✅ **Claude Code Skill** - Created `skills/vibe-init/skill.md` (native plugin system)
+1. ✅ **Claude Code Skill** - Created `skills/letter-init/skill.md` (native plugin system)
 2. ✅ **CI/CD Pipeline** - Python scripts in `.github/scripts/` (standalone automation)
 3. ✅ **GitHub Actions** - Workflow in `.github/workflows/` (cloud automation)
 4. ✅ **Documentation** - Comprehensive guides for users
@@ -38,9 +38,9 @@ This hybrid approach respects the existing plugin architecture while adding powe
 
 ### Core Components
 
-#### 1. **Vibe Init Skill** (`skills/vibe-init/skill.md`)
+#### 1. **Vibe Init Skill** (`skills/letter-init/skill.md`)
 - New Claude Code skill that sets up the entire pipeline
-- Invoked via `/vibe-init` command
+- Invoked via `/letter-init` command
 - Creates all required directories and files
 - Provides user instructions for GitHub Secrets setup
 
@@ -127,7 +127,7 @@ python-dotenv>=1.0.0
 │   └── .gitkeep                     ✅ Output directory
 │
 ├── skills/
-│   └── vibe-init/
+│   └── letter-init/
 │       └── skill.md                 ✅ New skill
 │
 ├── VIBE_CODING.md                   ✅ Documentation
@@ -145,7 +145,7 @@ python-dotenv>=1.0.0
 - [x] Adapted implementation plan to actual architecture
 
 ### Phase 2: Implementation ✅
-- [x] Created `skills/vibe-init/skill.md`
+- [x] Created `skills/letter-init/skill.md`
 - [x] Created `.github/scripts/blog_gen.py`
 - [x] Created `.github/workflows/vibe_publisher.yml`
 - [x] Created `.github/scripts/vibe_requirements.txt`
@@ -155,7 +155,7 @@ python-dotenv>=1.0.0
 
 ### Phase 3: Integration ✅
 - [x] Skill integrated into plugin structure
-- [x] Command accessible via `/vibe-init`
+- [x] Command accessible via `/letter-init`
 - [x] Updated plugin documentation (CLAUDE.md)
 - [x] Updated user-facing documentation (README.md, CLAUDE_TEMPLATE.md)
 
@@ -180,13 +180,13 @@ The Vibe Coding feature is now part of the plugin. Users who install this plugin
 
 **Step 1: Install the plugin**
 ```bash
-claude plugin install letter-for-my-future-self
+claude plugin install letter-for-myself
 ```
 
 **Step 2: Initialize Vibe Coding**
 ```bash
 claude
-> /vibe-init
+> /letter-init
 ```
 
 **Step 3: Add API Key to GitHub Secrets**
@@ -263,7 +263,7 @@ git push
 ## 💡 Key Innovations
 
 1. **Hybrid Architecture** - Combines Claude Code plugin system with standalone CI/CD
-2. **Zero Friction** - One command (`/vibe-init`) sets up everything
+2. **Zero Friction** - One command (`/letter-init`) sets up everything
 3. **Review Before Publish** - PR workflow ensures quality control
 4. **Cost Effective** - ~$0.03 per blog post with Sonnet
 5. **Customizable** - Easy to modify style, model, output format

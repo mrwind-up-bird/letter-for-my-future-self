@@ -35,6 +35,6 @@ The plugin now includes a **CI/CD pipeline** that:
 - Creates pull requests with generated drafts
 - Enables "Building in Public" with zero friction
 
-**Setup:** Run `/vibe-init` in your Claude Code session to install the pipeline.
+**Setup:** Run `/letter-init` in your Claude Code session to install the pipeline.
 
 **Learn more:** See [VIBE_CODING.md](./VIBE_CODING.md) for complete documentation.

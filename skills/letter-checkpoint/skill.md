@@ -1,16 +1,16 @@
 ---
-name: save-checkpoint
+name: letter-checkpoint
 description: Saves a structured "Letter to My Future Self" checkpoint to the .memory/ folder for context persistence between sessions.
 ---
 
-# Save Checkpoint Skill
+# Letter Checkpoint Skill
 
 This skill writes a session summary to `.memory/` for future context restoration.
 
 ## When to Use
 
 Invoke this skill when:
-- User types `/checkpoint`
+- User types `/letter-checkpoint` or `/checkpoint`
 - User says "wrap up", "end session", or "exit"
 - Session is about to end
 

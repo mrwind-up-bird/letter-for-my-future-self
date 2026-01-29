@@ -7,7 +7,7 @@ echo "⚙️  Building 'Letter to Myself' Claude Plugin..."
 
 # 1. Create Directory Structure
 mkdir -p "$PLUGIN_DIR/.claude-plugin"
-mkdir -p "$PLUGIN_DIR/skills/save-checkpoint"
+mkdir -p "$PLUGIN_DIR/skills/letter-checkpoint"
 mkdir -p "$PLUGIN_DIR/agents"
 
 # 2. Create Plugin Manifest
@@ -21,7 +21,7 @@ cat <<EOF > "$PLUGIN_DIR/.claude-plugin/plugin.json"
 EOF
 
 # 3. Create the 'Save Checkpoint' Skill
-cat <<EOF > "$PLUGIN_DIR/skills/save-checkpoint/SKILL.md"
+cat <<EOF > "$PLUGIN_DIR/skills/letter-checkpoint/SKILL.md"
 ---
 description: Writes a structured markdown summary (The Letter) to the .memory/ folder.
 input_schema:
@@ -59,7 +59,7 @@ When the user types \`/checkpoint\`, \`exit\`, or indicates the session is over,
 1.  **Stop** all coding tasks.
 2.  **Review** the conversation history.
 3.  **Generate** a Markdown summary (The Letter).
-4.  **Execute** the \`save-checkpoint\` skill.
+4.  **Execute** the \`letter-checkpoint\` skill.
 
 # The Letter Template
 \`\`\`markdown

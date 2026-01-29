@@ -29,7 +29,7 @@ It solves a common problem: you're building cool stuff and learning valuable les
 In your Claude Code session:
 
 ```
-/vibe-init
+/letter-init
 ```
 
 This creates:
