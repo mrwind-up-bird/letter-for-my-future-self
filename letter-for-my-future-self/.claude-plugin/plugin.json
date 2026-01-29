@@ -1,0 +1,6 @@
+{
+  "schema_version": "1.0",
+  "name": "letter-to-myself",
+  "description": "An agent that writes a 'Last Will' summary for context persistence.",
+  "version": "1.0.0"
+}
