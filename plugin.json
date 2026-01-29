@@ -1,7 +1,0 @@
-{
-  "schema_version": "1.0",
-  "name": "letter-for-my-future-self",
-  "author": "oliverbaer",
-  "description": "An agent that writes a 'Last Will' summary for context persistence.",
-  "version": "1.0.0"
-}

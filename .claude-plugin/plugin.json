@@ -1,6 +1,10 @@
 {
-  "schema_version": "1.0",
   "name": "letter-for-my-future-self",
-  "description": "An agent that writes a 'Last Will' summary for context persistence.",
-  "version": "1.0.0"
+  "description": "An agent that writes a 'Last Will' summary for context persistence between Claude Code sessions.",
+  "author": {
+    "name": "oliverbaer"
+  },
+  "version": "1.0.0",
+  "skills": "./skills",
+  "agents": "./agents"
 }
