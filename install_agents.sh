@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define the plugin root directory
-PLUGIN_DIR="letter-to-myself"
+PLUGIN_DIR="letter-for-my-future-self"
 
 echo "⚙️  Building 'Letter to Myself' Claude Plugin..."
 
