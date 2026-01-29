@@ -1,6 +1,3 @@
-Here is the full, clean content for **`MEMORY_VERSIONING.md`**. You can copy the code block below and save it directly.
-
-```markdown
 # 🧠 Versioning .memory with Git (Best Practices)
 
 This guide shows you how to cleanly version your **`.memory/`** folder (e.g., Session Letters / "Last Will") using **Git**. It includes **copy & paste** commands and proven patterns for both solo developers and teams.
