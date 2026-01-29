@@ -21,4 +21,20 @@ Right before a session ends, Claude writes a structured **letter to your future 
 
 Everything lands as a Markdown file in **`.memory/`**, so your next session can pick it up instantly — *without re-explaining the project to the model*.
 
-**Result:** less token burn, fewer “wait what” moments, and a smoother “back into flow” experience.
+**Result:** less token burn, fewer "wait what" moments, and a smoother "back into flow" experience.
+
+---
+
+## 🎨 NEW: Vibe Coding Pipeline
+
+Transform your private session memories into **public-ready blog posts** automatically.
+
+The plugin now includes a **CI/CD pipeline** that:
+- Watches your `.memory/` folder for changes
+- Uses Claude API to convert raw session logs into polished blog posts
+- Creates pull requests with generated drafts
+- Enables "Building in Public" with zero friction
+
+**Setup:** Run `/vibe-init` in your Claude Code session to install the pipeline.
+
+**Learn more:** See [VIBE_CODING.md](./VIBE_CODING.md) for complete documentation.
