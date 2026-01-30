@@ -1,14 +1,26 @@
 #!/bin/bash
 #
 # Letter to My Future Self - First Time Setup
-# Prompts for global Anthropic API key on plugin installation
+# - Installs agent to ~/.claude/agents/
+# - Prompts for global Anthropic API key
 #
 
+PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-$(dirname "$(dirname "$0")")}"
 CONFIG_DIR="$HOME/.config/letter-for-my-future-self"
 CONFIG_FILE="$CONFIG_DIR/config.json"
+AGENTS_DIR="$HOME/.claude/agents"
+AGENT_FILE="letter-for-my-future-self.md"
 
-# Only run if no global config exists
+# Always install/update the agent
+if [ -d "$PLUGIN_ROOT/agents" ] && [ -f "$PLUGIN_ROOT/agents/letter-for-myself.md" ]; then
+  mkdir -p "$AGENTS_DIR"
+  cp "$PLUGIN_ROOT/agents/letter-for-myself.md" "$AGENTS_DIR/$AGENT_FILE"
+  echo "Installed agent to $AGENTS_DIR/$AGENT_FILE"
+fi
+
+# Only prompt for API key if no global config exists
 if [ -f "$CONFIG_FILE" ]; then
+  echo "Setup complete! (API key already configured)"
   exit 0
 fi
 

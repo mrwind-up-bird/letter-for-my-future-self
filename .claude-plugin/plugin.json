@@ -11,6 +11,5 @@
   "version": "1.0.0",
   "keywords": ["memory", "persistence", "checkpoint", "blog"],
   "skills": "./skills",
-  "agents": "./agents",
   "hooks": "./hooks/hooks.json"
 }
