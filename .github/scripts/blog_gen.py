@@ -154,8 +154,8 @@ def show_config_status():
     print("\n  Priority: Environment > Project > Global\n")
 
 
-def get_latest_memory_file():
-    """Find the most recent letter file in .memory/"""
+def get_memory_file(file_path: str | None = None):
+    """Find a memory file - either specified or the most recent"""
     import re
     memory_dir = Path(os.path.abspath('.memory'))
 
@@ -163,18 +163,44 @@ def get_latest_memory_file():
         print("❌ .memory/ directory not found")
         sys.exit(1)
 
-    # Find all letter_XX.md files (numbered only, not letter_example.md)
+    # If a specific file is requested
+    if file_path:
+        # Check if it's just a filename or a full path
+        if os.path.isabs(file_path):
+            target = Path(file_path)
+        else:
+            target = memory_dir / file_path
+
+        if not target.exists():
+            print(f"❌ File not found: {target}")
+            sys.exit(1)
+        return target
+
+    # Find all letter files matching either format:
+    # - Old: letter_XXXX.md (e.g., letter_0001.md)
+    # - New: letter_YYYYMMDD_XXXX.md (e.g., letter_20260130_0001.md)
     letter_files = []
     for f in memory_dir.glob('letter_*.md'):
+        # New format: letter_YYYYMMDD_XXXX.md
+        match = re.match(r'letter_(\d{8})_(\d{4})\.md$', f.name)
+        if match:
+            # Sort key: date + counter as a single sortable string
+            sort_key = f"{match.group(1)}_{match.group(2)}"
+            letter_files.append((sort_key, f))
+            continue
+
+        # Old format: letter_XXXX.md (zero-padded or not)
         match = re.match(r'letter_(\d+)\.md$', f.name)
         if match:
-            letter_files.append((int(match.group(1)), f))
+            # Prefix with zeros to sort after new format
+            sort_key = f"00000000_{int(match.group(1)):04d}"
+            letter_files.append((sort_key, f))
 
     if not letter_files:
         print("❌ No numbered letter files found in .memory/")
         sys.exit(1)
 
-    # Sort by number descending, return highest
+    # Sort by key descending, return highest (newest)
     letter_files.sort(key=lambda x: x[0], reverse=True)
     return letter_files[0][1]
 
@@ -254,11 +280,14 @@ def main():
         epilog="""
 Examples:
   python blog_gen.py                  # Generate blog from latest memory
+  python blog_gen.py --file letter_20260130_0001.md  # Generate from specific file
   python blog_gen.py --setup          # Set up global API key
   python blog_gen.py --setup-project  # Set up project-specific API key
   python blog_gen.py --status         # Show API key configuration
         """
     )
+    parser.add_argument('--file', '-f', type=str,
+                        help='Specific memory file to convert (filename or full path)')
     parser.add_argument('--setup', action='store_true',
                         help='Set up global API key (~/.config/letter-for-my-future-self/)')
     parser.add_argument('--setup-project', action='store_true',
@@ -282,8 +311,8 @@ Examples:
     # Normal blog generation flow
     print("🎨 Letter to Blog: Generating blog post...")
 
-    # Get latest memory file
-    memory_file = get_latest_memory_file()
+    # Get memory file (specific or latest)
+    memory_file = get_memory_file(args.file)
     print(f"📖 Reading: {memory_file}")
 
     # Read content
