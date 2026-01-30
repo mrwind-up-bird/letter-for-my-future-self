@@ -213,7 +213,7 @@ excerpt: "Brief summary of the post"
 Generate the blog post now:"""
 
     message = client.messages.create(
-        model="claude-3-5-sonnet-20241022",
+        model="claude-sonnet-4-20250514",
         max_tokens=4096,
         messages=[
             {"role": "user", "content": prompt}
