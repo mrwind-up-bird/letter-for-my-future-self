@@ -156,20 +156,27 @@ def show_config_status():
 
 def get_latest_memory_file():
     """Find the most recent letter file in .memory/"""
+    import re
     memory_dir = Path(os.path.abspath('.memory'))
 
     if not memory_dir.exists():
         print("❌ .memory/ directory not found")
         sys.exit(1)
 
-    # Find all letter_*.md files
-    letter_files = sorted(memory_dir.glob('letter_*.md'), reverse=True)
+    # Find all letter_XX.md files (numbered only, not letter_example.md)
+    letter_files = []
+    for f in memory_dir.glob('letter_*.md'):
+        match = re.match(r'letter_(\d+)\.md$', f.name)
+        if match:
+            letter_files.append((int(match.group(1)), f))
 
     if not letter_files:
-        print("❌ No letter files found in .memory/")
+        print("❌ No numbered letter files found in .memory/")
         sys.exit(1)
 
-    return letter_files[0]
+    # Sort by number descending, return highest
+    letter_files.sort(key=lambda x: x[0], reverse=True)
+    return letter_files[0][1]
 
 
 def generate_blog_post(memory_content: str) -> str:
