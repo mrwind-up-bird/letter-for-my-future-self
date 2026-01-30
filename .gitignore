@@ -206,3 +206,9 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 .claude/
+
+# Letter to My Future Self - API key config (contains secrets!)
+.letter-config.json
+
+# Letter to My Future Self - Project initialization marker
+.memory/.initialized

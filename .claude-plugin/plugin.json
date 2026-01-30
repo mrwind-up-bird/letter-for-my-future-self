@@ -1,10 +1,16 @@
 {
   "name": "letter-for-my-future-self",
-  "description": "An agent that writes a 'Last Will' summary for context persistence between Claude Code sessions.",
+  "description": "Context persistence between Claude Code sessions with memory checkpoints and blog generation.",
   "author": {
-    "name": "oliverbaer"
+    "name": "mrwind-up-bird",
+    "url": "https://github.com/mrwind-up-bird"
   },
+  "homepage": "https://github.com/mrwind-up-bird/letter-for-my-future-self",
+  "repository": "https://github.com/mrwind-up-bird/letter-for-my-future-self",
+  "license": "MIT",
   "version": "1.0.0",
+  "keywords": ["memory", "persistence", "checkpoint", "blog"],
   "skills": "./skills",
-  "agents": "./agents"
+  "agents": "./agents",
+  "hooks": "./hooks/hooks.json"
 }

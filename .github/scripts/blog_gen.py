@@ -2,17 +2,156 @@
 """
 Blog Generator for Vibe Coding Pipeline
 Converts .memory/*.md files into polished blog posts using Anthropic API
+
+API Key Resolution Order:
+1. Environment variable ANTHROPIC_API_KEY (for CI/CD)
+2. Project config: ./.letter-config.json
+3. Global config: ~/.config/letter-for-my-future-self/config.json
 """
 
 import os
 import sys
+import json
 from pathlib import Path
 from datetime import datetime
-import anthropic
-from dotenv import load_dotenv
 
-# Load environment variables
-load_dotenv()
+# Defer heavy imports until needed (allows --help, --status without dependencies)
+anthropic = None
+def _load_anthropic():
+    global anthropic
+    if anthropic is None:
+        try:
+            import anthropic as _anthropic
+            anthropic = _anthropic
+        except ImportError:
+            print("❌ anthropic package not installed")
+            print("   Run: pip install anthropic")
+            sys.exit(1)
+    return anthropic
+
+# Load .env if available (optional)
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass  # dotenv is optional
+
+# Config file names
+PROJECT_CONFIG = ".letter-config.json"
+GLOBAL_CONFIG_DIR = Path.home() / ".config" / "letter-for-my-future-self"
+GLOBAL_CONFIG = GLOBAL_CONFIG_DIR / "config.json"
+
+
+def get_api_key() -> str | None:
+    """
+    Resolve API key with priority:
+    1. Environment variable (CI/CD, explicit override)
+    2. Project config (.letter-config.json in current dir)
+    3. Global config (~/.config/letter-for-my-future-self/config.json)
+    """
+    # 1. Environment variable (highest priority)
+    env_key = os.getenv('ANTHROPIC_API_KEY')
+    if env_key:
+        print("🔑 Using API key from environment variable")
+        return env_key
+
+    # 2. Project-level config
+    project_config = Path(PROJECT_CONFIG)
+    if project_config.exists():
+        try:
+            config = json.loads(project_config.read_text())
+            if config.get('anthropic_api_key'):
+                print("🔑 Using API key from project config (.letter-config.json)")
+                return config['anthropic_api_key']
+        except (json.JSONDecodeError, KeyError) as e:
+            print(f"⚠️  Warning: Could not read project config: {e}")
+
+    # 3. Global config
+    if GLOBAL_CONFIG.exists():
+        try:
+            config = json.loads(GLOBAL_CONFIG.read_text())
+            if config.get('anthropic_api_key'):
+                print("🔑 Using API key from global config (~/.config/letter-for-my-future-self/)")
+                return config['anthropic_api_key']
+        except (json.JSONDecodeError, KeyError) as e:
+            print(f"⚠️  Warning: Could not read global config: {e}")
+
+    return None
+
+
+def setup_api_key(scope: str = "global"):
+    """Interactive setup for API key configuration"""
+    print("\n🔧 Letter to My Future Self - API Key Setup\n")
+
+    api_key = input("Enter your Anthropic API key: ").strip()
+
+    if not api_key:
+        print("❌ No API key provided")
+        sys.exit(1)
+
+    if scope == "project":
+        config_path = Path(PROJECT_CONFIG)
+        config = {}
+        if config_path.exists():
+            config = json.loads(config_path.read_text())
+        config['anthropic_api_key'] = api_key
+        config_path.write_text(json.dumps(config, indent=2))
+        print(f"✅ API key saved to {PROJECT_CONFIG}")
+        print(f"⚠️  Add '{PROJECT_CONFIG}' to your .gitignore!")
+    else:
+        GLOBAL_CONFIG_DIR.mkdir(parents=True, exist_ok=True)
+        config = {}
+        if GLOBAL_CONFIG.exists():
+            config = json.loads(GLOBAL_CONFIG.read_text())
+        config['anthropic_api_key'] = api_key
+        GLOBAL_CONFIG.write_text(json.dumps(config, indent=2))
+        os.chmod(GLOBAL_CONFIG, 0o600)  # Restrict permissions
+        print(f"✅ API key saved to {GLOBAL_CONFIG}")
+
+    print("\n🎉 Setup complete! You can now run the blog generator.")
+
+
+def show_config_status():
+    """Show current API key configuration status"""
+    print("\n📋 API Key Configuration Status\n")
+
+    # Check environment
+    env_key = os.getenv('ANTHROPIC_API_KEY')
+    if env_key:
+        print(f"  ✅ Environment: ANTHROPIC_API_KEY is set (ends with ...{env_key[-4:]})")
+    else:
+        print("  ❌ Environment: ANTHROPIC_API_KEY not set")
+
+    # Check project config
+    project_config = Path(PROJECT_CONFIG)
+    if project_config.exists():
+        try:
+            config = json.loads(project_config.read_text())
+            if config.get('anthropic_api_key'):
+                key = config['anthropic_api_key']
+                print(f"  ✅ Project: {PROJECT_CONFIG} (ends with ...{key[-4:]})")
+            else:
+                print(f"  ⚠️  Project: {PROJECT_CONFIG} exists but no API key")
+        except:
+            print(f"  ❌ Project: {PROJECT_CONFIG} exists but is invalid")
+    else:
+        print(f"  ❌ Project: {PROJECT_CONFIG} not found")
+
+    # Check global config
+    if GLOBAL_CONFIG.exists():
+        try:
+            config = json.loads(GLOBAL_CONFIG.read_text())
+            if config.get('anthropic_api_key'):
+                key = config['anthropic_api_key']
+                print(f"  ✅ Global: {GLOBAL_CONFIG} (ends with ...{key[-4:]})")
+            else:
+                print(f"  ⚠️  Global: {GLOBAL_CONFIG} exists but no API key")
+        except:
+            print(f"  ❌ Global: {GLOBAL_CONFIG} exists but is invalid")
+    else:
+        print(f"  ❌ Global: {GLOBAL_CONFIG} not found")
+
+    print("\n  Priority: Environment > Project > Global\n")
 
 
 def get_latest_memory_file():
@@ -35,12 +174,17 @@ def get_latest_memory_file():
 
 def generate_blog_post(memory_content: str) -> str:
     """Use Anthropic API to convert memory file to blog post"""
-    api_key = os.getenv('ANTHROPIC_API_KEY')
+    api_key = get_api_key()
 
     if not api_key:
-        print("❌ ANTHROPIC_API_KEY not found in environment")
+        print("❌ No API key found!")
+        print("\nTo set up your API key, run one of:")
+        print("  python blog_gen.py --setup         # Global (all projects)")
+        print("  python blog_gen.py --setup-project # This project only")
+        print("\nOr set the ANTHROPIC_API_KEY environment variable.")
         sys.exit(1)
 
+    _load_anthropic()
     client = anthropic.Anthropic(api_key=api_key)
 
     prompt = f"""You are a technical blog writer. Convert this development session memory into an engaging, public-ready blog post.
@@ -94,7 +238,41 @@ def save_blog_post(content: str, source_file: Path):
 
 
 def main():
-    """Main execution flow"""
+    """Main execution flow with CLI argument handling"""
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        description="Vibe Coding Blog Generator - Convert session memories to blog posts",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  python blog_gen.py                  # Generate blog from latest memory
+  python blog_gen.py --setup          # Set up global API key
+  python blog_gen.py --setup-project  # Set up project-specific API key
+  python blog_gen.py --status         # Show API key configuration
+        """
+    )
+    parser.add_argument('--setup', action='store_true',
+                        help='Set up global API key (~/.config/letter-for-my-future-self/)')
+    parser.add_argument('--setup-project', action='store_true',
+                        help='Set up project-specific API key (.letter-config.json)')
+    parser.add_argument('--status', action='store_true',
+                        help='Show current API key configuration status')
+
+    args = parser.parse_args()
+
+    # Handle setup commands
+    if args.setup:
+        setup_api_key(scope="global")
+        return
+    if args.setup_project:
+        setup_api_key(scope="project")
+        return
+    if args.status:
+        show_config_status()
+        return
+
+    # Normal blog generation flow
     print("🎨 Vibe Coding: Generating blog post...")
 
     # Get latest memory file
