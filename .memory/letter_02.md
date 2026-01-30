@@ -4,12 +4,12 @@
 
 ## 1. Executive Summary
 * **Goal:** Session checkpoint on the "Letter to My Future Self" Claude Code plugin project
-* **Current Status:** Clean state — project fully functional with Vibe Coding pipeline in place
+* **Current Status:** Clean state — project fully functional with Letter to Blog pipeline in place
 
 ## 2. The "Done" List (Context Anchor)
 * Previous session (letter_01): Documented global installation procedures
 * Marketplace support and API key hooks merged (commit 7e7c1ab)
-* Vibe Coding pipeline for automated blog generation active (commit 651157d)
+* Letter to Blog pipeline for automated blog generation active (commit 651157d)
 * Plugin installed globally at `~/.claude/plugins/letter-for-my-future-self`
 * Skills available: `/letter-checkpoint`, `/letter-init`
 * Agent available: `letter-for-my-future-self:letter-for-myself`
@@ -25,7 +25,7 @@
 * Most recent commit: `99a0160 chore(memory): session handoff`
 
 ## 5. Immediate Next Steps
-1. [ ] Configure ANTHROPIC_API_KEY in GitHub secrets for Vibe Coding pipeline
+1. [ ] Configure ANTHROPIC_API_KEY in GitHub secrets for Letter to Blog pipeline
 2. [ ] Test end-to-end blog generation workflow
 3. [ ] Update QUICK_START.md with verification checklist from letter_01
 4. [ ] Consider adding automated tests for the plugin installation process

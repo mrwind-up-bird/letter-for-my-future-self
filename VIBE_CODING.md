@@ -1,8 +1,8 @@
-# 🎨 Vibe Coding: Memory to Blog Pipeline
+# 🎨 Letter to Blog: Memory to Blog Pipeline
 
 ## What Is This?
 
-**Vibe Coding** is an extension to the "Letter to Myself" plugin that automatically transforms your private session memories into public-ready blog posts using Claude API and GitHub Actions.
+**Letter to Blog** is an extension to the "Letter to Myself" plugin that automatically transforms your private session memories into public-ready blog posts using Claude API and GitHub Actions.
 
 It solves a common problem: you're building cool stuff and learning valuable lessons, but you never get around to writing about it. This pipeline does it for you.
 

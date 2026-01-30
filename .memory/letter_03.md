@@ -3,7 +3,7 @@
 **Date:** 2026-01-30 13:07
 
 ## 1. Executive Summary
-* **Goal:** Configure Anthropic API key for the Vibe Coding blog generation pipeline
+* **Goal:** Configure Anthropic API key for the Letter to Blog blog generation pipeline
 * **Current Status:** Complete — API key configured globally, blog generation now functional
 
 ## 2. The "Done" List (Context Anchor)

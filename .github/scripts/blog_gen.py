@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Blog Generator for Vibe Coding Pipeline
+Blog Generator for Letter to Blog Pipeline
 Converts .memory/*.md files into polished blog posts using Anthropic API
 
 API Key Resolution Order:
@@ -249,7 +249,7 @@ def main():
     import argparse
 
     parser = argparse.ArgumentParser(
-        description="Vibe Coding Blog Generator - Convert session memories to blog posts",
+        description="Letter to Blog Blog Generator - Convert session memories to blog posts",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
@@ -280,7 +280,7 @@ Examples:
         return
 
     # Normal blog generation flow
-    print("🎨 Vibe Coding: Generating blog post...")
+    print("🎨 Letter to Blog: Generating blog post...")
 
     # Get latest memory file
     memory_file = get_latest_memory_file()

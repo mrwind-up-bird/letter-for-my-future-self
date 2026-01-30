@@ -1,11 +1,11 @@
 ---
 name: letter-init
-description: Initialize the Vibe Coding pipeline to transform memory files into public-ready blog posts via CI/CD.
+description: Initialize the Letter to Blog pipeline to transform memory files into public-ready blog posts via CI/CD.
 ---
 
 # Letter Init Skill
 
-This skill sets up the complete "Vibe Coding" pipeline that automatically converts your `.memory/` session letters into polished blog posts using GitHub Actions and the Anthropic API.
+This skill sets up the complete "Letter to Blog" pipeline that automatically converts your `.memory/` session letters into polished blog posts using GitHub Actions and the Anthropic API.
 
 ## When to Use
 
@@ -41,7 +41,7 @@ Write the file `.github/scripts/blog_gen.py` with the following content:
 ```python
 #!/usr/bin/env python3
 """
-Blog Generator for Vibe Coding Pipeline
+Blog Generator for Letter to Blog Pipeline
 Converts .memory/*.md files into polished blog posts using Anthropic API
 """
 
@@ -132,7 +132,7 @@ def save_blog_post(content: str, source_file: Path):
 
 def main():
     """Main execution flow"""
-    print("🎨 Vibe Coding: Generating blog post...")
+    print("🎨 Letter to Blog: Generating blog post...")
 
     # Get latest memory file
     memory_file = get_latest_memory_file()
@@ -210,7 +210,7 @@ jobs:
           commit-message: 'feat(blog): generate post from memory session'
           title: '📝 New Blog Post from Session Memory'
           body: |
-            ## 🎨 Vibe Coding Pipeline
+            ## 🎨 Letter to Blog Pipeline
 
             Auto-generated blog post from latest session memory.
 
@@ -240,7 +240,7 @@ grep -q "^drafts/" .gitignore || echo "✅ drafts/ will be tracked in git"
 Print the following success message:
 
 ```
-✅ Vibe Coding Pipeline Initialized!
+✅ Letter to Blog Pipeline Initialized!
 
 📁 Created:
   - .memory/         (Memory storage)

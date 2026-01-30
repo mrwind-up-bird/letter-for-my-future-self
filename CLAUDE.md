@@ -12,12 +12,12 @@ This is a Claude Code plugin called "Letter to Myself" that implements context p
 - `.claude-plugin/plugin.json` - Plugin manifest defining name, version, and component paths
 - `agents/letter-for-myself.md` - Agent persona that handles checkpoint creation
 - `skills/letter-checkpoint/skill.md` - Skill that writes memory checkpoints to disk
-- `skills/letter-init/skill.md` - Skill that sets up the Vibe Coding CI/CD pipeline
+- `skills/letter-init/skill.md` - Skill that sets up the Letter to Blog CI/CD pipeline
 - `CLAUDE_TEMPLATE.md` - Template users copy to their projects to enable the plugin
 - `install_agents.sh` - Installation script that sets up the plugin structure
 
-### Vibe Coding Pipeline (NEW)
-The plugin now includes a "Vibe Coding" feature that automatically transforms memory files into public-ready blog posts:
+### Letter to Blog Pipeline (NEW)
+The plugin now includes a "Letter to Blog" feature that automatically transforms memory files into public-ready blog posts:
 - `.github/scripts/blog_gen.py` - Python script using Anthropic API for blog generation
 - `.github/scripts/vibe_requirements.txt` - Python dependencies (anthropic, python-dotenv)
 - `.github/workflows/vibe_publisher.yml` - GitHub Actions workflow triggered on .memory/ changes
@@ -50,7 +50,7 @@ The agent activates when users type:
 - `exit` or indicates session is ending
 - "wrap up"
 
-### Setting Up Vibe Coding
+### Setting Up Letter to Blog
 Initialize the blog generation pipeline by running:
 ```bash
 /letter-init

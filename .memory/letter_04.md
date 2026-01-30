@@ -3,7 +3,7 @@
 **Date:** 2026-01-30 13:15
 
 ## 1. Executive Summary
-* **Goal:** Fix Vibe Coding blog generation pipeline failures in GitHub Actions
+* **Goal:** Fix Letter to Blog blog generation pipeline failures in GitHub Actions
 * **Current Status:** Complete — two bugs fixed and pushed, awaiting workflow re-run
 
 ## 2. The "Done" List (Context Anchor)

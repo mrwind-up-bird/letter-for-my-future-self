@@ -25,7 +25,7 @@ Everything lands as a Markdown file in **`.memory/`**, so your next session can 
 
 ---
 
-## 🎨 NEW: Vibe Coding Pipeline
+## 🎨 NEW: Letter to Blog Pipeline
 
 Transform your private session memories into **public-ready blog posts** automatically.
 

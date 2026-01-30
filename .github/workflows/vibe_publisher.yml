@@ -39,7 +39,7 @@ jobs:
           commit-message: 'feat(blog): generate post from memory session'
           title: '📝 New Blog Post from Session Memory'
           body: |
-            ## 🎨 Vibe Coding Pipeline
+            ## 🎨 Letter to Blog Pipeline
 
             Auto-generated blog post from latest session memory.
 
