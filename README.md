@@ -37,4 +37,4 @@ The plugin now includes a **CI/CD pipeline** that:
 
 **Setup:** Run `/letter-init` in your Claude Code session to install the pipeline.
 
-**Learn more:** See [VIBE_CODING.md](./VIBE_CODING.md) for complete documentation.
+**Learn more:** See [LETTER_TO_BLOG.md](./LETTER_TO_BLOG.md) for complete documentation.

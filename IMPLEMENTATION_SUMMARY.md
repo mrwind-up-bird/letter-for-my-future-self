@@ -86,7 +86,7 @@ python-dotenv>=1.0.0
 
 ### Supporting Documentation
 
-#### 5. **VIBE_CODING.md** (Comprehensive Guide)
+#### 5. **LETTER_TO_BLOG.md** (Comprehensive Guide)
 - Installation instructions
 - Usage (automatic & manual modes)
 - Customization options
@@ -130,7 +130,7 @@ python-dotenv>=1.0.0
 │   └── letter-init/
 │       └── skill.md                 ✅ New skill
 │
-├── VIBE_CODING.md                   ✅ Documentation
+├── LETTER_TO_BLOG.md                   ✅ Documentation
 └── IMPLEMENTATION_SUMMARY.md        ✅ This file
 ```
 
@@ -293,7 +293,7 @@ git push
 
 | File | Purpose |
 |------|---------|
-| `VIBE_CODING.md` | Complete user guide with examples |
+| `LETTER_TO_BLOG.md` | Complete user guide with examples |
 | `CLAUDE.md` | Technical reference for Claude Code |
 | `README.md` | Project overview with quick start |
 | `CLAUDE_TEMPLATE.md` | Template for user projects |

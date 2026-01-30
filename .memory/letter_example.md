@@ -12,7 +12,7 @@
 * Created `.github/workflows/vibe_publisher.yml` - GitHub Actions workflow
 * Added `vibe_requirements.txt` with anthropic and python-dotenv dependencies
 * Updated CLAUDE.md with Letter to Blog documentation
-* Created comprehensive VIBE_CODING.md guide
+* Created comprehensive LETTER_TO_BLOG.md guide
 * Updated README.md and CLAUDE_TEMPLATE.md
 
 ## 3. The "Pain" Log (CRITICAL)
@@ -30,6 +30,6 @@
 ## 5. Immediate Next Steps
 1. [x] Create all required files and directories
 2. [x] Verify Python syntax and structure
-3. [x] Update documentation (README, CLAUDE.md, VIBE_CODING.md)
+3. [x] Update documentation (README, CLAUDE.md, LETTER_TO_BLOG.md)
 4. [ ] Test the pipeline with actual API key
 5. [ ] Create git commit with all changes

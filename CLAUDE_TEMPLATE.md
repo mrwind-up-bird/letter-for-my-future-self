@@ -13,7 +13,7 @@ To enable automatic blog post generation from session memories:
 2.  **Add API key:** Set `ANTHROPIC_API_KEY` in GitHub repository secrets
 3.  **Automatic:** Every push to `.memory/` triggers blog post generation
 
-See [VIBE_CODING.md](./VIBE_CODING.md) for complete documentation.
+See [LETTER_TO_BLOG.md](./LETTER_TO_BLOG.md) for complete documentation.
 
 ## 📝 Coding Standards
 (Add your normal coding standards here, e.g., TypeScript strict mode, Python PEP8, etc.)
