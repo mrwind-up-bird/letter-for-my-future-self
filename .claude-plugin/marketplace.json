@@ -12,7 +12,7 @@
       "name": "letter-for-my-future-self",
       "source": "./",
       "description": "Persist context between Claude sessions with memory checkpoints and optional blog generation via Anthropic API",
-      "version": "1.0.0",
+      "version": "1.0.3",
       "homepage": "https://github.com/mrwind-up-bird/letter-for-my-future-self",
       "repository": "https://github.com/mrwind-up-bird/letter-for-my-future-self",
       "license": "MIT",
