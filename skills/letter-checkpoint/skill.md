@@ -1,5 +1,5 @@
 ---
-name: letter-checkpoint
+name: checkpoint
 description: Saves a structured "Letter to My Future Self" checkpoint to the .memory/ folder for context persistence between sessions.
 ---
 
