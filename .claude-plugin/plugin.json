@@ -10,6 +10,5 @@
   "license": "MIT",
   "version": "1.0.0",
   "keywords": ["memory", "persistence", "checkpoint", "blog"],
-  "skills": "./skills",
-  "hooks": "./hooks/hooks.json"
+  "skills": "./skills"
 }
