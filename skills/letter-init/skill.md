@@ -47,6 +47,7 @@ Converts .memory/*.md files into polished blog posts using Anthropic API
 
 import os
 import sys
+import json
 from pathlib import Path
 from datetime import datetime
 import anthropic
@@ -54,6 +55,42 @@ from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
+
+# Config paths
+GLOBAL_CONFIG = Path.home() / ".config" / "letter-for-my-future-self" / "config.json"
+PROJECT_CONFIG = Path(".letter-config.json")
+
+def get_api_key():
+    """Get API key from environment, project config, or global config (in that order)"""
+    # 1. Environment variable (highest priority)
+    api_key = os.getenv('ANTHROPIC_API_KEY')
+    if api_key:
+        print("  Using API key from environment variable")
+        return api_key
+
+    # 2. Project-level config
+    if PROJECT_CONFIG.exists():
+        try:
+            config = json.loads(PROJECT_CONFIG.read_text())
+            api_key = config.get('anthropic_api_key')
+            if api_key:
+                print("  Using API key from project config")
+                return api_key
+        except (json.JSONDecodeError, IOError):
+            pass
+
+    # 3. Global config (fallback)
+    if GLOBAL_CONFIG.exists():
+        try:
+            config = json.loads(GLOBAL_CONFIG.read_text())
+            api_key = config.get('anthropic_api_key')
+            if api_key:
+                print("  Using API key from global config")
+                return api_key
+        except (json.JSONDecodeError, IOError):
+            pass
+
+    return None
 
 def get_latest_memory_file():
     """Find the most recent letter file in .memory/"""
@@ -74,10 +111,10 @@ def get_latest_memory_file():
 
 def generate_blog_post(memory_content: str) -> str:
     """Use Anthropic API to convert memory file to blog post"""
-    api_key = os.getenv('ANTHROPIC_API_KEY')
+    api_key = get_api_key()
 
     if not api_key:
-        print("❌ ANTHROPIC_API_KEY not found in environment")
+        print("❌ No API key found. Set ANTHROPIC_API_KEY or run --setup")
         sys.exit(1)
 
     client = anthropic.Anthropic(api_key=api_key)
@@ -108,7 +145,7 @@ excerpt: "Brief summary of the post"
 Generate the blog post now:"""
 
     message = client.messages.create(
-        model="claude-3-5-sonnet-20241022",
+        model="claude-sonnet-4-20250514",
         max_tokens=4096,
         messages=[
             {"role": "user", "content": prompt}
@@ -273,3 +310,7 @@ Print the following success message:
 - Generated blog posts go to `drafts/` for review before publishing
 - The CI/CD pipeline creates a PR automatically (not direct push)
 - Users can manually run the script locally for testing
+- **Local testing**: The script now supports fallback API key lookup:
+  1. Environment variable `ANTHROPIC_API_KEY`
+  2. Project config `.letter-config.json`
+  3. Global config `~/.config/letter-for-my-future-self/config.json`
