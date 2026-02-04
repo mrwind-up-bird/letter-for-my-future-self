@@ -1,40 +1,271 @@
-# 📨 Letter to Myself — Claude Code Context Persistence
+# Letter to Myself
 
-> **"... when sessions end, chats get compacted, or days pass between work blocks."**
+A Claude Code plugin for **context persistence between sessions**.
 
-**Letter to Myself** is a plugin for **Claude Code** that keeps your project momentum intact — even when sessions end, chats get compacted, or days pass between work blocks.
+When sessions end, chats get compacted, or days pass between work blocks, Claude forgets everything. This plugin solves that by writing structured "handoff letters" to a local `.memory/` folder that Claude reads on startup.
 
-Claude is brilliant in the moment. But “the moment” has a hard limit: **the context window**.  
-This plugin adds a missing primitive: **continuity**.
-
-It implements a simple but powerful protocol:
-
-## 🧾 The “Last Will” Protocol (What it does)
-
-Right before a session ends, Claude writes a structured **letter to your future self** into a local folder:
-
-- **What we did** (high-signal summary)
-- **Why we did it** (decisions + reasoning)
-- **The Pain Log** (critical errors, root causes, workarounds)
-- **State that matters** (active variables, constraints, open risks)
-- **Next steps** (actionable, ranked)
-
-Everything lands as a Markdown file in **`.memory/`**, so your next session can pick it up instantly — *without re-explaining the project to the model*.
-
-**Result:** less token burn, fewer "wait what" moments, and a smoother "back into flow" experience.
+**Result:** Less re-explaining, fewer repeated mistakes, smoother "back into flow" experience.
 
 ---
 
-## 🎨 NEW: Letter to Blog Pipeline
+## Features
 
-Transform your private session memories into **public-ready blog posts** automatically.
+### Core: Session Memory
+Save structured session summaries with a single command:
+- What we did (high-signal summary)
+- Why we did it (decisions + reasoning)
+- Pain Log (critical errors, root causes, workarounds)
+- State that matters (variables, constraints, risks)
+- Next steps (actionable, ranked)
 
-The plugin now includes a **CI/CD pipeline** that:
-- Watches your `.memory/` folder for changes
-- Uses Claude API to convert raw session logs into polished blog posts
-- Creates pull requests with generated drafts
-- Enables "Building in Public" with zero friction
+### Letter to Blog Pipeline
+Automatically transform session memories into public-ready blog posts via GitHub Actions + Claude API. Perfect for "building in public" with zero friction.
 
-**Setup:** Run `/letter-init` in your Claude Code session to install the pipeline.
+---
 
-**Learn more:** See [LETTER_TO_BLOG.md](./LETTER_TO_BLOG.md) for complete documentation.
+## Quick Start
+
+### 1. Install the Plugin
+
+```bash
+git clone https://github.com/mrwind-up-bird/letter-for-my-future-self.git
+cd letter-for-my-future-self
+chmod +x install_agents.sh
+./install_agents.sh
+```
+
+Or install as a local plugin:
+
+```bash
+claude plugin install . --scope user
+```
+
+### 2. Add to Your Project
+
+Copy the template to your project:
+
+```bash
+cp /path/to/letter-for-my-future-self/CLAUDE_TEMPLATE.md /path/to/your-project/CLAUDE.md
+```
+
+If you already have a `CLAUDE.md`, merge the relevant sections.
+
+### 3. Save Your First Checkpoint
+
+Start Claude Code in your project:
+
+```bash
+cd /path/to/your-project
+claude
+```
+
+When ending a session, run:
+
+```
+/checkpoint
+```
+
+Or say "wrap up", "exit", or "end session".
+
+A memory file appears in `.memory/letter_YYYYMMDD_XXXX.md`.
+
+### 4. Resume Next Session
+
+```bash
+claude
+```
+
+Claude reads the latest letter and picks up where you left off.
+
+---
+
+## Commands
+
+| Command | Description |
+|---------|-------------|
+| `/checkpoint` | Save a session memory to `.memory/` |
+| `/letter-init` | Set up the Letter to Blog CI/CD pipeline |
+
+---
+
+## Letter to Blog Pipeline
+
+Transform private session memories into polished blog posts automatically.
+
+### How It Works
+
+```
+.memory/letter_03.md  →  GitHub Actions  →  Claude API  →  drafts/blog_2026-01-29_letter_03.md
+```
+
+1. You work normally — Claude saves memories to `.memory/`
+2. Git push triggers — GitHub Actions detects `.memory/**` changes
+3. Claude transforms — blog_gen.py calls Anthropic API
+4. PR created — Generated blog post appears in `drafts/`
+5. You review & publish — Edit if needed, then merge
+
+### Setup
+
+Initialize the pipeline:
+
+```
+/letter-init
+```
+
+This creates:
+- `.github/scripts/blog_gen.py` — Python generator script
+- `.github/scripts/vibe_requirements.txt` — Dependencies
+- `.github/workflows/vibe_publisher.yml` — GitHub Actions workflow
+- `drafts/` — Output directory
+
+Add your API key to GitHub Secrets:
+1. Go to **Settings → Secrets and variables → Actions**
+2. Add secret named `ANTHROPIC_API_KEY`
+3. Value: Your key from https://console.anthropic.com
+
+Commit and push:
+
+```bash
+git add .github/ drafts/
+git commit -m "feat: add letter to blog pipeline"
+git push
+```
+
+See [LETTER_TO_BLOG.md](./LETTER_TO_BLOG.md) for full documentation.
+
+---
+
+## Memory File Format
+
+Each checkpoint creates a file like `.memory/letter_20260130_0001.md`:
+
+```markdown
+# Letter to Myself (Session Handoff)
+
+**Date:** 2026-01-30 14:32
+
+## 1. Executive Summary
+* **Goal:** Building a REST API for user authentication
+* **Current Status:** Stopped at JWT refresh token implementation
+
+## 2. The "Done" List (Context Anchor)
+* Implemented user registration endpoint in `src/routes/auth.ts`
+* Added password hashing with bcrypt
+* Created PostgreSQL schema in `migrations/001_users.sql`
+
+## 3. The "Pain" Log (CRITICAL)
+* **Tried:** jsonwebtoken library for JWT signing
+* **Failed:** "Algorithm not supported" error with RS256
+* **Workaround:** Switched to HS256 with environment secret
+* *Note:* Do not retry RS256 without proper key configuration.
+
+## 4. Active Variable State
+* PORT=3000, DATABASE_URL in .env
+* Test user: test@example.com / password123
+
+## 5. Immediate Next Steps
+1. [ ] Implement refresh token rotation
+2. [ ] Add rate limiting to auth endpoints
+3. [ ] Write integration tests
+```
+
+---
+
+## Git Versioning
+
+Track `.memory/` in Git to maintain a timeline of your project's decisions.
+
+### Basic Setup
+
+```bash
+mkdir -p .memory
+git add .memory
+git commit -m "chore(memory): start tracking session memory"
+```
+
+### Team Workflow (Shared vs Private)
+
+```bash
+mkdir -p .memory/shared .memory/private
+echo ".memory/private/" >> .gitignore
+```
+
+- **Shared:** Architecture decisions, sync with team
+- **Private:** Personal scratchpad, local only
+
+### Security: Scan for Secrets
+
+```bash
+rg -n --hidden --glob ".memory/**" \
+  -e "AKIA[0-9A-Z]{16}" \
+  -e "BEGIN( RSA)? PRIVATE KEY" \
+  .memory || echo "Clean"
+```
+
+See [MEMORY_VERSIONING.md](./MEMORY_VERSIONING.md) for comprehensive workflows.
+
+---
+
+## Project Structure
+
+```
+.
+├── .claude-plugin/
+│   └── plugin.json           # Plugin manifest
+├── skills/
+│   ├── letter-checkpoint/
+│   │   └── skill.md          # /checkpoint command
+│   └── letter-init/
+│       └── skill.md          # /letter-init command
+├── agents/
+│   └── letter-for-myself.md  # Agent persona
+├── .github/
+│   ├── scripts/
+│   │   ├── blog_gen.py       # Blog generator
+│   │   └── vibe_requirements.txt
+│   └── workflows/
+│       └── vibe_publisher.yml
+├── CLAUDE_TEMPLATE.md        # Template for user projects
+├── QUICK_START.md            # Installation guide
+├── LETTER_TO_BLOG.md         # Blog pipeline docs
+└── MEMORY_VERSIONING.md      # Git workflow guide
+```
+
+---
+
+## Documentation
+
+| Document | Description |
+|----------|-------------|
+| [QUICK_START.md](./QUICK_START.md) | Step-by-step installation guide |
+| [LETTER_TO_BLOG.md](./LETTER_TO_BLOG.md) | Blog pipeline documentation |
+| [MEMORY_VERSIONING.md](./MEMORY_VERSIONING.md) | Git workflows for `.memory/` |
+| [CLAUDE_TEMPLATE.md](./CLAUDE_TEMPLATE.md) | Template for your projects |
+
+---
+
+## Troubleshooting
+
+**Plugin commands don't appear**
+- Restart Claude Code
+- Check plugin is installed: `claude plugin list`
+- Verify `.claude-plugin/plugin.json` exists
+
+**No `.memory/` output**
+- Run `/checkpoint` explicitly
+- Check `CLAUDE.md` includes the template
+
+**Blog pipeline doesn't trigger**
+- Verify pushing to `main` branch
+- Check `ANTHROPIC_API_KEY` secret is set
+- Look at Actions tab for errors
+
+---
+
+## License
+
+MIT
+
+---
+
+Built for developers who want Claude to remember what matters.
