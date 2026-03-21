@@ -1,8 +1,7 @@
 {
   "name": "letter-for-my-future-self-marketplace",
   "owner": {
-    "name": "mrwind-up-bird",
-    "url": "https://github.com/mrwind-up-bird"
+    "name": "mrwind-up-bird"
   },
   "metadata": {
     "description": "Context persistence plugin for Claude Code sessions"
@@ -11,8 +10,7 @@
     {
       "name": "letter-for-my-future-self",
       "source": "./",
-      "description": "Persist context between Claude sessions with memory checkpoints and optional blog generation via Anthropic API",
-      "version": "1.1.0",
+      "description": "Persist context between Claude sessions with structured memory checkpoints (Pain Logs, Done Lists, Next Steps). Optional blog generation via Anthropic API.",
       "homepage": "https://github.com/mrwind-up-bird/letter-for-my-future-self",
       "repository": "https://github.com/mrwind-up-bird/letter-for-my-future-self",
       "license": "MIT",
@@ -22,8 +20,7 @@
         "checkpoint",
         "context",
         "session",
-        "blog-generation",
-        "vibe-coding"
+        "blog-generation"
       ]
     }
   ]

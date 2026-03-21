@@ -1,14 +1,15 @@
 {
   "name": "letter-for-my-future-self",
-  "description": "Context persistence between Claude Code sessions with memory checkpoints and blog generation.",
+  "description": "Context persistence between Claude Code sessions via structured memory checkpoints. Prevents amnesia across sessions with Pain Logs, Done Lists, and actionable Next Steps. Optional blog generation pipeline.",
   "author": {
-    "name": "mrwind-up-bird",
-    "url": "https://github.com/mrwind-up-bird"
+    "name": "mrwind-up-bird"
   },
   "homepage": "https://github.com/mrwind-up-bird/letter-for-my-future-self",
   "repository": "https://github.com/mrwind-up-bird/letter-for-my-future-self",
   "license": "MIT",
   "version": "1.1.0",
-  "keywords": ["memory", "persistence", "checkpoint", "blog"],
-  "skills": "./skills"
+  "keywords": ["memory", "persistence", "checkpoint", "context", "session", "blog"],
+  "skills": "./skills",
+  "agents": "./agents",
+  "hooks": "./hooks"
 }
