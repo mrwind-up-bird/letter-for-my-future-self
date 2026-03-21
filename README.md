@@ -67,7 +67,7 @@ When ending a session, run:
 
 Or say "wrap up", "exit", or "end session".
 
-A memory file appears in `.memory/letter_YYYYMMDD_XXXX.md`.
+A memory file appears in `.memory/letter_YYYYMMDDHHMMSS.md`.
 
 ### 4. Resume Next Session
 
@@ -79,12 +79,23 @@ Claude reads the latest letter and picks up where you left off.
 
 ---
 
+<!-- AUTO-GENERATED: commands -->
 ## Commands
 
 | Command | Description |
 |---------|-------------|
 | `/checkpoint` | Save a session memory to `.memory/` |
 | `/letter-init` | Set up the Letter to Blog CI/CD pipeline |
+
+### blog_gen.py CLI
+
+| Flag | Description |
+|------|-------------|
+| `--file`, `-f` | Convert a specific memory file (filename or path) |
+| `--setup` | Configure global API key (`~/.config/letter-for-my-future-self/`) |
+| `--setup-project` | Configure project-specific API key (`.letter-config.json`) |
+| `--status` | Show current API key configuration status |
+<!-- /AUTO-GENERATED: commands -->
 
 ---
 
@@ -137,7 +148,7 @@ See [LETTER_TO_BLOG.md](./LETTER_TO_BLOG.md) for full documentation.
 
 ## Memory File Format
 
-Each checkpoint creates a file like `.memory/letter_20260130_0001.md`:
+Each checkpoint creates a file like `.memory/letter_20260130143200.md`:
 
 ```markdown
 # Letter to Myself (Session Handoff)
@@ -206,22 +217,29 @@ See [MEMORY_VERSIONING.md](./MEMORY_VERSIONING.md) for comprehensive workflows.
 
 ---
 
+<!-- AUTO-GENERATED: project-structure -->
 ## Project Structure
 
 ```
 .
 ├── .claude-plugin/
-│   └── plugin.json           # Plugin manifest
+│   ├── plugin.json           # Plugin manifest (v1.0.5)
+│   └── marketplace.json      # Marketplace listing metadata
 ├── skills/
 │   ├── letter-checkpoint/
-│   │   └── skill.md          # /checkpoint command
+│   │   └── SKILL.md          # /checkpoint command
 │   └── letter-init/
-│       └── skill.md          # /letter-init command
+│       └── SKILL.md          # /letter-init command
 ├── agents/
 │   └── letter-for-myself.md  # Agent persona
+├── hooks/
+│   └── hooks.json            # Setup & SessionStart hooks
+├── scripts/
+│   ├── setup-api-key.sh      # First-time setup (agent + API key)
+│   └── check-project-key.sh  # Per-project initialization
 ├── .github/
 │   ├── scripts/
-│   │   ├── blog_gen.py       # Blog generator
+│   │   ├── blog_gen.py       # Blog generator (CLI with --setup/--status/--file)
 │   │   └── vibe_requirements.txt
 │   └── workflows/
 │       └── vibe_publisher.yml
@@ -230,6 +248,7 @@ See [MEMORY_VERSIONING.md](./MEMORY_VERSIONING.md) for comprehensive workflows.
 ├── LETTER_TO_BLOG.md         # Blog pipeline docs
 └── MEMORY_VERSIONING.md      # Git workflow guide
 ```
+<!-- /AUTO-GENERATED: project-structure -->
 
 ---
 

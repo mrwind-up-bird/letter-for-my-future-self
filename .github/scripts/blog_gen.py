@@ -36,6 +36,12 @@ try:
 except ImportError:
     pass  # dotenv is optional
 
+
+def _mask_key(key: str) -> str:
+    """Safely mask an API key for display"""
+    return f"...{key[-4:]}" if len(key) >= 8 else "****"
+
+
 # Config file names
 PROJECT_CONFIG = ".letter-config.json"
 GLOBAL_CONFIG_DIR = Path.home() / ".config" / "letter-for-my-future-self"
@@ -118,7 +124,7 @@ def show_config_status():
     # Check environment
     env_key = os.getenv('ANTHROPIC_API_KEY')
     if env_key:
-        print(f"  ✅ Environment: ANTHROPIC_API_KEY is set (ends with ...{env_key[-4:]})")
+        print(f"  ✅ Environment: ANTHROPIC_API_KEY is set (ends with {_mask_key(env_key)})")
     else:
         print("  ❌ Environment: ANTHROPIC_API_KEY not set")
 
@@ -128,12 +134,11 @@ def show_config_status():
         try:
             config = json.loads(project_config.read_text())
             if config.get('anthropic_api_key'):
-                key = config['anthropic_api_key']
-                print(f"  ✅ Project: {PROJECT_CONFIG} (ends with ...{key[-4:]})")
+                print(f"  ✅ Project: {PROJECT_CONFIG} (ends with {_mask_key(config['anthropic_api_key'])})")
             else:
                 print(f"  ⚠️  Project: {PROJECT_CONFIG} exists but no API key")
-        except:
-            print(f"  ❌ Project: {PROJECT_CONFIG} exists but is invalid")
+        except (json.JSONDecodeError, IOError, KeyError) as e:
+            print(f"  ❌ Project: {PROJECT_CONFIG} exists but is invalid ({e})")
     else:
         print(f"  ❌ Project: {PROJECT_CONFIG} not found")
 
@@ -142,12 +147,11 @@ def show_config_status():
         try:
             config = json.loads(GLOBAL_CONFIG.read_text())
             if config.get('anthropic_api_key'):
-                key = config['anthropic_api_key']
-                print(f"  ✅ Global: {GLOBAL_CONFIG} (ends with ...{key[-4:]})")
+                print(f"  ✅ Global: {GLOBAL_CONFIG} (ends with {_mask_key(config['anthropic_api_key'])})")
             else:
                 print(f"  ⚠️  Global: {GLOBAL_CONFIG} exists but no API key")
-        except:
-            print(f"  ❌ Global: {GLOBAL_CONFIG} exists but is invalid")
+        except (json.JSONDecodeError, IOError, KeyError) as e:
+            print(f"  ❌ Global: {GLOBAL_CONFIG} exists but is invalid ({e})")
     else:
         print(f"  ❌ Global: {GLOBAL_CONFIG} not found")
 
@@ -176,24 +180,30 @@ def get_memory_file(file_path: str | None = None):
             sys.exit(1)
         return target
 
-    # Find all letter files matching either format:
-    # - Old: letter_XXXX.md (e.g., letter_0001.md)
-    # - New: letter_YYYYMMDD_XXXX.md (e.g., letter_20260130_0001.md)
+    # Find all letter files matching any format:
+    # - Current: letter_YYYYMMDDHHMMSS.md (e.g., letter_20260321143022.md)
+    # - Legacy:  letter_YYYYMMDD_XXXX.md  (e.g., letter_20260130_0001.md)
+    # - Ancient: letter_XXXX.md           (e.g., letter_0001.md)
     letter_files = []
     for f in memory_dir.glob('letter_*.md'):
-        # New format: letter_YYYYMMDD_XXXX.md
+        # Current format: letter_YYYYMMDDHHMMSS.md (14 digits)
+        match = re.match(r'letter_(\d{14})\.md$', f.name)
+        if match:
+            letter_files.append((match.group(1), f))
+            continue
+
+        # Legacy format: letter_YYYYMMDD_XXXX.md
         match = re.match(r'letter_(\d{8})_(\d{4})\.md$', f.name)
         if match:
-            # Sort key: date + counter as a single sortable string
-            sort_key = f"{match.group(1)}_{match.group(2)}"
+            # Pad to 14 digits: YYYYMMDD + 0000 + counter as seconds
+            sort_key = f"{match.group(1)}00{match.group(2)}"
             letter_files.append((sort_key, f))
             continue
 
-        # Old format: letter_XXXX.md (zero-padded or not)
+        # Ancient format: letter_XXXX.md (zero-padded or not)
         match = re.match(r'letter_(\d+)\.md$', f.name)
         if match:
-            # Prefix with zeros to sort after new format
-            sort_key = f"00000000_{int(match.group(1)):04d}"
+            sort_key = f"00000000{int(match.group(1)):06d}"
             letter_files.append((sort_key, f))
 
     if not letter_files:
@@ -205,8 +215,12 @@ def get_memory_file(file_path: str | None = None):
     return letter_files[0][1]
 
 
-def generate_blog_post(memory_content: str) -> str:
-    """Use Anthropic API to convert memory file to blog post"""
+def generate_blog_post(memory_content: str) -> tuple[str, dict]:
+    """Use Anthropic API to convert memory file to blog post.
+
+    Returns:
+        Tuple of (blog_content, usage_stats)
+    """
     api_key = get_api_key()
 
     if not api_key:
@@ -245,15 +259,50 @@ excerpt: "Brief summary of the post"
 
 Generate the blog post now:"""
 
-    message = client.messages.create(
-        model="claude-sonnet-4-20250514",
-        max_tokens=4096,
-        messages=[
-            {"role": "user", "content": prompt}
-        ]
-    )
+    # Pricing per million tokens (update when models change)
+    PRICING = {
+        "claude-sonnet-4-20250514": {"input": 3.00, "output": 15.00},
+    }
 
-    return message.content[0].text
+    try:
+        message = client.messages.create(
+            model="claude-sonnet-4-20250514",
+            max_tokens=4096,
+            messages=[
+                {"role": "user", "content": prompt}
+            ]
+        )
+    except anthropic.APIConnectionError as e:
+        print(f"❌ Connection error: {e}")
+        sys.exit(1)
+    except anthropic.RateLimitError:
+        print("❌ Rate limit exceeded. Wait a moment and retry.")
+        sys.exit(1)
+    except anthropic.APIStatusError as e:
+        print(f"❌ API error ({e.status_code}): {e.message}")
+        sys.exit(1)
+
+    if not message.content:
+        print("❌ API returned empty response")
+        sys.exit(1)
+
+    # Calculate usage stats
+    usage = message.usage
+    model_id = message.model
+    rates = PRICING.get(model_id, {"input": 3.00, "output": 15.00})
+    input_cost = (usage.input_tokens / 1_000_000) * rates["input"]
+    output_cost = (usage.output_tokens / 1_000_000) * rates["output"]
+
+    stats = {
+        "model": model_id,
+        "input_tokens": usage.input_tokens,
+        "output_tokens": usage.output_tokens,
+        "total_tokens": usage.input_tokens + usage.output_tokens,
+        "cost_usd": round(input_cost + output_cost, 6),
+        "stop_reason": message.stop_reason,
+    }
+
+    return message.content[0].text, stats
 
 
 def save_blog_post(content: str, source_file: Path):
@@ -320,12 +369,13 @@ Examples:
 
     # Generate blog post
     print("🤖 Calling Anthropic API...")
-    blog_content = generate_blog_post(memory_content)
+    blog_content, stats = generate_blog_post(memory_content)
 
     # Save to drafts
     output_file = save_blog_post(blog_content, memory_file)
 
     print(f"✅ Success! Blog post saved to: {output_file}")
+    print(f"📊 Tokens: {stats['input_tokens']:,} in / {stats['output_tokens']:,} out | Cost: ${stats['cost_usd']:.4f}")
     print("🚀 Ready for review and publishing!")
 
 

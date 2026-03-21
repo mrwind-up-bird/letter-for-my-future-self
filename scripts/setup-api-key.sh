@@ -23,16 +23,16 @@ fi
 # /letter-init and /checkpoint instead of /letter-for-my-future-self:letter-init
 if [ -d "$PLUGIN_ROOT/skills" ]; then
   # Install letter-init skill
-  if [ -f "$PLUGIN_ROOT/skills/letter-init/skill.md" ]; then
+  if [ -f "$PLUGIN_ROOT/skills/letter-init/SKILL.md" ]; then
     mkdir -p "$SKILLS_DIR/letter-init"
-    cp "$PLUGIN_ROOT/skills/letter-init/skill.md" "$SKILLS_DIR/letter-init/skill.md"
+    cp "$PLUGIN_ROOT/skills/letter-init/SKILL.md" "$SKILLS_DIR/letter-init/SKILL.md"
     echo "Installed skill: /letter-init"
   fi
 
   # Install checkpoint skill (short alias)
-  if [ -f "$PLUGIN_ROOT/skills/letter-checkpoint/skill.md" ]; then
+  if [ -f "$PLUGIN_ROOT/skills/letter-checkpoint/SKILL.md" ]; then
     mkdir -p "$SKILLS_DIR/checkpoint"
-    cp "$PLUGIN_ROOT/skills/letter-checkpoint/skill.md" "$SKILLS_DIR/checkpoint/skill.md"
+    cp "$PLUGIN_ROOT/skills/letter-checkpoint/SKILL.md" "$SKILLS_DIR/checkpoint/SKILL.md"
     echo "Installed skill: /checkpoint"
   fi
 fi
@@ -58,11 +58,8 @@ if [ -t 0 ]; then
 
   if [ -n "$api_key" ]; then
     mkdir -p "$CONFIG_DIR"
-    cat > "$CONFIG_FILE" << EOF
-{
-  "anthropic_api_key": "$api_key"
-}
-EOF
+    # Use printf to safely escape special characters in JSON
+    printf '{\n  "anthropic_api_key": "%s"\n}\n' "$api_key" > "$CONFIG_FILE"
     chmod 600 "$CONFIG_FILE"
     echo ""
     echo "Global API key saved to: $CONFIG_FILE"

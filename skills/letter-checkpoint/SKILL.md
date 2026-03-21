@@ -21,14 +21,13 @@ Invoke this skill when:
    mkdir -p .memory
    ```
 
-2. **Determine the filename** using date + counter format:
-   - Format: `letter_YYYYMMDD_XXXX.md` (e.g., `letter_20260130_0001.md`)
-   - List files in `.memory/` folder for today's date
-   - Find the highest counter for today and increment by 1
-   - If no files exist for today, start at `0001`
+2. **Determine the filename** using timestamp format:
+   - Format: `letter_YYYYMMDDHHMMSS.md` (e.g., `letter_20260321143022.md`)
+   - Use the current date and time to generate the filename
+   - This ensures uniqueness without counters and enables chronological sorting
 
 3. **Write the letter** using the Write tool:
-   - File path: `.memory/letter_YYYYMMDD_XXXX.md`
+   - File path: `.memory/letter_YYYYMMDDHHMMSS.md`
    - Content: The generated letter following the template
 
 4. **Confirm to user**: Tell them the checkpoint was saved with the filename.

@@ -1,92 +1,48 @@
 #!/bin/bash
+#
+# Letter to My Future Self — Plugin Installer
+#
+# Installs the agent and skills to ~/.claude/ for global availability.
+# Run this from the plugin repository root.
+#
 
-# Define the plugin root directory
-PLUGIN_DIR="letter-for-my-future-self"
+set -euo pipefail
 
-echo "⚙️  Building 'Letter to Myself' Claude Plugin..."
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+AGENTS_DIR="$HOME/.claude/agents"
+SKILLS_DIR="$HOME/.claude/skills"
 
-# 1. Create Directory Structure
-mkdir -p "$PLUGIN_DIR/.claude-plugin"
-mkdir -p "$PLUGIN_DIR/skills/letter-checkpoint"
-mkdir -p "$PLUGIN_DIR/agents"
+echo "Installing 'Letter to My Future Self' Claude Plugin..."
+echo ""
 
-# 2. Create Plugin Manifest
-cat <<EOF > "$PLUGIN_DIR/.claude-plugin/plugin.json"
-{
-  "schema_version": "1.0",
-  "name": "letter-to-myself",
-  "description": "An agent that writes a 'Last Will' summary for context persistence.",
-  "version": "1.0.0"
-}
-EOF
+# 1. Install agent
+if [ -f "$SCRIPT_DIR/agents/letter-for-myself.md" ]; then
+  mkdir -p "$AGENTS_DIR"
+  cp "$SCRIPT_DIR/agents/letter-for-myself.md" "$AGENTS_DIR/letter-for-my-future-self.md"
+  echo "  Agent installed: $AGENTS_DIR/letter-for-my-future-self.md"
+else
+  echo "  WARNING: agents/letter-for-myself.md not found — skipping agent"
+fi
 
-# 3. Create the 'Save Checkpoint' Skill
-cat <<EOF > "$PLUGIN_DIR/skills/letter-checkpoint/SKILL.md"
----
-description: Writes a structured markdown summary (The Letter) to the .memory/ folder.
-input_schema:
-  filename:
-    type: string
-    description: "The filename, e.g., letter_01.md. Always increment the number found in the folder."
-  content:
-    type: string
-    description: "The full markdown content of the letter."
----
+# 2. Install skills
+if [ -f "$SCRIPT_DIR/skills/letter-init/SKILL.md" ]; then
+  mkdir -p "$SKILLS_DIR/letter-init"
+  cp "$SCRIPT_DIR/skills/letter-init/SKILL.md" "$SKILLS_DIR/letter-init/SKILL.md"
+  echo "  Skill installed: /letter-init"
+fi
 
-mkdir -p .memory
-echo "\$content" > .memory/"\$filename"
-echo "✅ Checkpoint saved to .memory/\$filename"
-EOF
+if [ -f "$SCRIPT_DIR/skills/letter-checkpoint/SKILL.md" ]; then
+  mkdir -p "$SKILLS_DIR/checkpoint"
+  cp "$SCRIPT_DIR/skills/letter-checkpoint/SKILL.md" "$SKILLS_DIR/checkpoint/SKILL.md"
+  echo "  Skill installed: /checkpoint"
+fi
 
-# 4. Create the Agent Persona
-cat <<EOF > "$PLUGIN_DIR/agents/letter-to-myself.md"
----
-name: letter-to-myself
-description: An agent designed to summarize work and persist context between sessions.
-color: "#8A2BE2"
-icon: "📝"
----
-
-# Identity
-You are the **Context Persistence Agent**. Your goal is to prevent "amnesia" between coding sessions.
-
-# The Protocol
-You act as a normal coding assistant, BUT you have a special directive.
-
-**THE TRIGGER:**
-When the user types \`/checkpoint\`, \`exit\`, or indicates the session is over, you MUST:
-
-1.  **Stop** all coding tasks.
-2.  **Review** the conversation history.
-3.  **Generate** a Markdown summary (The Letter).
-4.  **Execute** the \`letter-checkpoint\` skill.
-
-# The Letter Template
-\`\`\`markdown
-# 📨 Letter to Myself (Session Handoff)
-
-## 1. Executive Summary
-* **Goal:** ...
-* **Current Status:** ...
-
-## 2. The "Done" List
-* Implemented [Feature A].
-
-## 3. The "Pain" Log (CRITICAL)
-* **Tried:** [Library/Method]
-* **Failed:** [Error message]
-* **Solution:** [How we fixed it]
-
-## 4. Variable State
-* Ports, env vars, mocked data.
-
-## 5. Next Steps
-1. [ ] ...
-\`\`\`
-
-# Startup Behavior
-Check the file list immediately. If a \`.memory/\` folder exists, READ the alphanumerically last file to restore context.
-EOF
-
-echo "🎉 Plugin created in ./$PLUGIN_DIR"
-echo "👉 To install, run: claude plugin add ./$PLUGIN_DIR"
+echo ""
+echo "Installation complete!"
+echo ""
+echo "Usage:"
+echo "  /checkpoint    — Save a session memory to .memory/"
+echo "  /letter-init   — Set up the Letter to Blog CI/CD pipeline"
+echo ""
+echo "To enable blog generation, run:"
+echo "  python3 $SCRIPT_DIR/.github/scripts/blog_gen.py --setup"

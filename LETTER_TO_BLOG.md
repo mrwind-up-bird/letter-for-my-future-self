@@ -77,14 +77,24 @@ Test the generator locally before pushing:
 # Install dependencies
 pip install -r .github/scripts/vibe_requirements.txt
 
-# Set your API key
+# Set your API key (one-time)
+python .github/scripts/blog_gen.py --setup          # Global (all projects)
+python .github/scripts/blog_gen.py --setup-project  # This project only
+
+# Or set via environment
 export ANTHROPIC_API_KEY="sk-ant-..."
 
 # Run the generator
-python .github/scripts/blog_gen.py
+python .github/scripts/blog_gen.py                                    # Latest memory file
+python .github/scripts/blog_gen.py --file letter_20260130_0001.md     # Specific file
+
+# Check configuration
+python .github/scripts/blog_gen.py --status
 ```
 
 Output appears in `drafts/blog_YYYY-MM-DD_letter_XX.md`
+
+API key resolution order: environment variable > project config (`.letter-config.json`) > global config (`~/.config/letter-for-my-future-self/config.json`)
 
 ---
 
@@ -117,9 +127,9 @@ excerpt: "Brief summary of what you built/learned"
 Edit `.github/scripts/blog_gen.py`:
 
 ```python
-model="claude-3-5-sonnet-20241022",  # Current default
+model="claude-sonnet-4-20250514",    # Current default
 # OR
-model="claude-opus-4-5-20251101",    # For higher quality (costs more)
+model="claude-opus-4-20250514",      # For higher quality (costs more)
 ```
 
 ### Modify the Writing Style
@@ -153,12 +163,13 @@ drafts_dir = Path(os.path.abspath('blog/posts'))  # Instead of 'drafts'
 .
 ├── .github/
 │   ├── scripts/
-│   │   ├── blog_gen.py              # Main generator (Python)
+│   │   ├── blog_gen.py              # Main generator (Python, CLI with --setup/--status/--file)
 │   │   └── vibe_requirements.txt    # anthropic, python-dotenv
 │   └── workflows/
 │       └── vibe_publisher.yml       # GitHub Actions workflow
 ├── .memory/
 │   └── letter_*.md                  # Session memories (input)
+├── .letter-config.json              # Project-specific API key (optional, gitignored)
 └── drafts/
     └── blog_*_letter_*.md           # Generated posts (output)
 ```
@@ -223,7 +234,7 @@ The GitHub Action (`.github/workflows/vibe_publisher.yml`) runs these steps:
 
 ## Cost Estimation
 
-Using Claude 3.5 Sonnet (default):
+Using Claude Sonnet 4 (default):
 - Input: ~$3 per million tokens
 - Output: ~$15 per million tokens
 

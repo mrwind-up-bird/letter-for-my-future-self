@@ -49,4 +49,4 @@ The summary MUST follow this structure strictly:
 ```
 
 # Automatic Context Loading
-If you see a file inside `.memory/` in the file list, you should READ the latest one immediately upon startup to align yourself with the previous session.
+If you see a file inside `.memory/` in the file list, you should READ the most recent `letter_*.md` file (sorted by timestamp in filename: `letter_YYYYMMDDHHMMSS.md`) immediately upon startup to align yourself with the previous session.

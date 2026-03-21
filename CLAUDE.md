@@ -9,12 +9,16 @@ This is a Claude Code plugin called "Letter to Myself" that implements context p
 ## Core Components
 
 ### Plugin Structure
-- `.claude-plugin/plugin.json` - Plugin manifest defining name, version, and component paths
+- `.claude-plugin/plugin.json` - Plugin manifest (v1.0.5) defining name, version, and component paths
+- `.claude-plugin/marketplace.json` - Marketplace listing metadata
 - `agents/letter-for-myself.md` - Agent persona that handles checkpoint creation
-- `skills/letter-checkpoint/skill.md` - Skill that writes memory checkpoints to disk
-- `skills/letter-init/skill.md` - Skill that sets up the Letter to Blog CI/CD pipeline
+- `skills/letter-checkpoint/SKILL.md` - Skill that writes memory checkpoints to disk
+- `skills/letter-init/SKILL.md` - Skill that sets up the Letter to Blog CI/CD pipeline
+- `hooks/hooks.json` - Plugin hooks (Setup and SessionStart)
+- `scripts/setup-api-key.sh` - First-time setup: installs agent/skills to `~/.claude/`, prompts for API key
+- `scripts/check-project-key.sh` - Per-project initialization: creates directories, copies infrastructure, shows status
 - `CLAUDE_TEMPLATE.md` - Template users copy to their projects to enable the plugin
-- `install_agents.sh` - Installation script that sets up the plugin structure
+- `install_agents.sh` - Legacy installation script that creates a nested plugin structure
 
 ### Letter to Blog Pipeline (NEW)
 The plugin now includes a "Letter to Blog" feature that automatically transforms memory files into public-ready blog posts:
@@ -24,10 +28,11 @@ The plugin now includes a "Letter to Blog" feature that automatically transforms
 - `drafts/` - Output directory for generated blog posts
 
 ### The Memory Protocol
-- Memory files are stored in `.memory/` as sequential markdown files (`letter_01.md`, `letter_02.md`, etc.)
+- Memory files are stored in `.memory/` as timestamp-named markdown files (`letter_YYYYMMDDHHMMSS.md`)
 - Each file follows a strict template with sections: Executive Summary, Done List, Pain Log, Variable State, Next Steps
-- On startup, the agent reads the highest-numbered letter file to restore context
-- On checkpoint/exit, the agent generates a new letter with incremented number
+- On startup, the agent reads the most recent letter file (sorted by timestamp) to restore context
+- On checkpoint/exit, the agent generates a new letter with current timestamp
+- Legacy formats (`letter_YYYYMMDD_XXXX.md`, `letter_XX.md`) are still supported for backwards compatibility
 
 ## Installation & Usage
 
@@ -114,17 +119,34 @@ The `letter-checkpoint` skill:
 
 ## File Organization
 
+<!-- AUTO-GENERATED: file-organization -->
 ```
 .
 ├── .claude-plugin/
-│   └── plugin.json           # Plugin manifest
+│   ├── plugin.json           # Plugin manifest (v1.0.5)
+│   └── marketplace.json      # Marketplace listing metadata
 ├── agents/
 │   └── letter-for-myself.md  # Agent persona definition
 ├── skills/
-│   └── letter-checkpoint/
-│       └── skill.md          # Checkpoint skill definition
+│   ├── letter-checkpoint/
+│   │   └── SKILL.md          # Checkpoint skill definition
+│   └── letter-init/
+│       └── SKILL.md          # Letter to Blog init skill
+├── hooks/
+│   └── hooks.json            # Setup & SessionStart hooks
+├── scripts/
+│   ├── setup-api-key.sh      # First-time setup (agent + API key)
+│   └── check-project-key.sh  # Per-project initialization
+├── .github/
+│   ├── scripts/
+│   │   ├── blog_gen.py       # Blog generator (CLI with --setup/--status/--file)
+│   │   └── vibe_requirements.txt
+│   └── workflows/
+│       └── vibe_publisher.yml
 ├── CLAUDE_TEMPLATE.md        # Template for user projects
-├── install_agents.sh         # Installation script
+├── install_agents.sh         # Legacy installation script
 ├── MEMORY_VERSIONING.md      # Git workflow guide
-├── QUICK_START.md           # User installation guide
-└── README.md                # Project documentation
+├── QUICK_START.md            # User installation guide
+└── README.md                 # Project documentation
+```
+<!-- /AUTO-GENERATED: file-organization -->
